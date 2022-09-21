@@ -1,6 +1,7 @@
 import torch
 from argparse import Namespace
 import numpy as np
+import cv2
 
 from ImageMatchingToolbox.third_party.superglue.models.superglue import SuperGlue as SG
 from ImageMatchingToolbox.third_party.superglue.models.utils import read_image, frame2tensor
@@ -44,10 +45,10 @@ class SuperGlue(Matching):
         return matches, kpts1, kpts2, scores
     
     def match_pairs(self, im1, im2):
-        # _, gray1, sc1 = read_image(im1_path, self.device, [self.imsize], 0, True)
-        # _, gray2, sc2 = read_image(im2_path, self.device, [self.imsize], 0, True)
-        inp1 = frame2tensor(im1, self.device, gray=True)
-        inp2 = frame2tensor(im2, self.device, gray=True)
+        gray1 = cv2.cvtColor(im1, cv2.COLOR_RGB2GRAY)
+        gray2 = cv2.cvtColor(im2, cv2.COLOR_RGB2GRAY)
+        inp1 = frame2tensor(gray1, self.device)
+        inp2 = frame2tensor(gray2, self.device)
         # upscale = np.array([sc1 + sc2])
         matches, kpts1, kpts2, scores = self.match_inputs_(inp1, inp2)
         # matches = upscale * matches
