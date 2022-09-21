@@ -3,9 +3,9 @@ import torch
 import numpy as np
 import cv2
 
-from third_party.loftr.src.loftr import LoFTR as LoFTR_, default_cfg
+from ImageMatchingToolbox.third_party.loftr.src.loftr import LoFTR as LoFTR_, default_cfg
 from .base import Matching
-from immatch.utils.data_io import load_gray_scale_tensor_cv
+from ImageMatchingToolbox.immatch.utils.data_io import img2tensor
 
 class LoFTR(Matching):
     def __init__(self, args):
@@ -32,10 +32,9 @@ class LoFTR(Matching):
             self.name += '_noms'
         print(f'Initialize {self.name}')
         
-    def load_im(self, im_path):
-        return load_gray_scale_tensor_cv(
-            im_path, self.device, imsize=self.imsize, dfactor=8
-        )
+    def load_im_gray(self, img):
+        gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+        return img2tensor(gray, self.device, dfactor=8)
 
     def match_inputs_(self, gray1, gray2):
         batch = {'image0': gray1, 'image1': gray2}
@@ -46,18 +45,10 @@ class LoFTR(Matching):
         matches = np.concatenate([kpts1, kpts2], axis=1)
         return matches, kpts1, kpts2, scores
 
-    def match_pairs(self, im1_path, im2_path):
-        gray1, sc1 = self.load_im(im1_path)
-        gray2, sc2 = self.load_im(im2_path)
+    def match_pairs(self, im1, im2):
+        gray1, sc1 = self.load_im_gray(im1)
+        gray2, sc1 = self.load_im_gray(im2)
 
-        upscale = np.array([sc1 + sc2])
         matches, kpts1, kpts2, scores = self.match_inputs_(gray1, gray2)
 
-        if self.no_match_upscale:
-            return matches, kpts1, kpts2, scores, upscale.squeeze(0)
-
-        # Upscale matches &  kpts
-        matches = upscale * matches
-        kpts1 = sc1 * kpts1
-        kpts2 = sc2 * kpts2
         return matches, kpts1, kpts2, scores

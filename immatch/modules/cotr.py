@@ -4,7 +4,7 @@ import imageio
 import torch
 from pathlib import Path
 import sys
-cotr_path =  Path(__file__).parent / '../../third_party/cotr'
+cotr_path = Path(__file__).parent / '../../third_party/cotr'
 sys.path.append(str(cotr_path))
 
 from COTR.models import build_model

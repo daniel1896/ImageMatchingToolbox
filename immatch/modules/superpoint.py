@@ -1,8 +1,8 @@
 import torch
 import numpy as np
 
-from third_party.superglue.models.superpoint import SuperPoint as SP
-from third_party.superglue.models.utils import read_image
+from ImageMatchingToolbox.third_party.superglue.models.superpoint import SuperPoint as SP
+from ImageMatchingToolbox.third_party.superglue.models.utils import read_image
 from .base import FeatureDetection, Matching
 
 class SuperPoint(FeatureDetection, Matching):

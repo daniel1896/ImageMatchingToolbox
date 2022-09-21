@@ -6,9 +6,9 @@ from pathlib import Path
 r2d2_path = Path(__file__).parent / '../../third_party/r2d2'
 sys.path.append(str(r2d2_path))
 
-from third_party.r2d2.extract import NonMaxSuppression, extract_multiscale
-from third_party.r2d2.tools.dataloader import norm_RGB
-from third_party.r2d2.nets.patchnet import *
+from ImageMatchingToolbox.third_party.r2d2.extract import NonMaxSuppression, extract_multiscale
+from ImageMatchingToolbox.third_party.r2d2.tools.dataloader import norm_RGB
+from ImageMatchingToolbox.third_party.r2d2.nets.patchnet import *
 from PIL import Image
 from .base import FeatureDetection, Matching
 

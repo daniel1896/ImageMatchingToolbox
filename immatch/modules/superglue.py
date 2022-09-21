@@ -2,8 +2,8 @@ import torch
 from argparse import Namespace
 import numpy as np
 
-from third_party.superglue.models.superglue import SuperGlue as SG
-from third_party.superglue.models.utils import read_image
+from ImageMatchingToolbox.third_party.superglue.models.superglue import SuperGlue as SG
+from ImageMatchingToolbox.third_party.superglue.models.utils import read_image, frame2tensor
 from .superpoint import SuperPoint
 from .base import Matching
 
@@ -43,13 +43,15 @@ class SuperGlue(Matching):
         scores = scores[valid]
         return matches, kpts1, kpts2, scores
     
-    def match_pairs(self, im1_path, im2_path):
-        _, gray1, sc1 = read_image(im1_path, self.device, [self.imsize], 0, True)
-        _, gray2, sc2 = read_image(im2_path, self.device, [self.imsize], 0, True)
-        upscale = np.array([sc1 + sc2])
-        matches, kpts1, kpts2, scores = self.match_inputs_(gray1, gray2)
-        matches = upscale * matches
-        kpts1 = sc1 * kpts1
-        kpts2 = sc2 * kpts2        
+    def match_pairs(self, im1, im2):
+        # _, gray1, sc1 = read_image(im1_path, self.device, [self.imsize], 0, True)
+        # _, gray2, sc2 = read_image(im2_path, self.device, [self.imsize], 0, True)
+        inp1 = frame2tensor(im1, self.device, gray=True)
+        inp2 = frame2tensor(im2, self.device, gray=True)
+        # upscale = np.array([sc1 + sc2])
+        matches, kpts1, kpts2, scores = self.match_inputs_(inp1, inp2)
+        # matches = upscale * matches
+        # kpts1 = sc1 * kpts1
+        # kpts2 = sc2 * kpts2
         return matches, kpts1, kpts2, scores
     
